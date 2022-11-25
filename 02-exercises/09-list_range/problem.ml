@@ -13,7 +13,10 @@ let () =
    including [from] but excluding [to_] in increasing order.
 
    {| val range : int -> int -> int list |} *)
-let range from to_ = failwith "For you to implement"
+
+let rec range from to_ =
+   if from = to_ then []
+   else [ from ] @ range (from + 1) to_
 
 (* You might've noticed that the list type in the function definitions of the
    operator [( @ )] (and also [( :: )]) look a bit different from every other
@@ -29,6 +32,9 @@ let range from to_ = failwith "For you to implement"
    Here, the ['a] is called a "type parameter", and [list_append] is described as
    a "polymorphic function". We'll revisit parametrized types in later
    exercises. *)
+
+(* let a = range 1 50;;
+List.iter ~f:(Stdio.printf "%d ") a *)
 
 let%test "Testing range..." = [%compare.equal: int list] (range 1 4) [ 1; 2; 3 ]
 

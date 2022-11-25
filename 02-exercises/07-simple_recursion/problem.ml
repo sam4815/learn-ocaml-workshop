@@ -8,7 +8,7 @@ open! Base
    Now change [let] to [let rec] and recompile.
 
    A function is only allowed to call itself if the [rec] flag is specified. *)
-let add_every_number_up_to x =
+let rec add_every_number_up_to x =
   (* Make sure we don't call this on negative numbers! *)
   assert (x >= 0);
   match x with
@@ -19,7 +19,10 @@ let add_every_number_up_to x =
 (* Now, let's write a function to take the product of every number up to [x]. *)
 let rec factorial x =
   assert (x >= 0);
-  failwith "For you to implement"
+  match x with
+  | 0
+  | 1 -> 1
+  | _ -> x * factorial (x - 1)
 ;;
 
 let%test "Testing factorial..." = Int.( = ) 1 (factorial 0)
