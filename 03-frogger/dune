@@ -1,5 +1,5 @@
 (executable
- (modes byte exe)
+ (modes js)
  (name main)
  (preprocess
   (pps js_of_ocaml-ppx ppx_jane))

@@ -1,7 +1,7 @@
 ;; -*- scheme -*-
 
 (executables
- (modes byte exe)
+ (modes js)
  (names main)
  (preprocess
   (pps js_of_ocaml-ppx))
