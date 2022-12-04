@@ -25,17 +25,17 @@ module Frog = struct
   let create = Fields.create
 end
 
-module Kind = struct
-  type t =
-    | Car1
-    | Car2
-    | Car3
-    | Log1
-    | Log2
-    | Log3
-end
-
 module Non_frog_character = struct
+  module Kind = struct
+    type t =
+      | Car1
+      | Car2
+      | Car3
+      | Log1
+      | Log2
+      | Log3
+  end
+
   type t =
     {
       kind : Kind.t;
@@ -65,20 +65,20 @@ let random_element (arr) =
 ;;
 
 let create_frog () =
-  Frog.create ~position:{ x = 5; y = 0; } ~direction:Facing_up
+  Frog.create ~position:{ x = Board.num_cols / 2; y = 0; } ~direction:Facing_up
 ;;
 
-let create_nfc (kind : Kind.t) (row : Int.t) (speed : Int.t) =
+let create_nfc (kind : Non_frog_character.Kind.t) (row : Int.t) (speed : Int.t) =
   Non_frog_character.create
     ~kind:kind
     ~position:{ x = (if speed > 0 then 0 else Board.num_cols - 1); y = row; }
     ~horizontal_speed:speed
 ;;
 
-let logs = [| Kind.Log1; Kind.Log2; Kind.Log3 |]
+let logs = [| Non_frog_character.Kind.Log1; Non_frog_character.Kind.Log2; Non_frog_character.Kind.Log3 |]
 let create_log (row : Int.t) (speed : Int.t) = create_nfc (random_element logs) row speed
 
-let cars = [| Kind.Car1; Kind.Car2; Kind.Car3 |]
+let cars = [| Non_frog_character.Kind.Car1; Non_frog_character.Kind.Car2; Non_frog_character.Kind.Car3 |]
 let create_car (row : Int.t) (speed : Int.t) = create_nfc (random_element cars) row speed
 
 let move_nfc (nfc : Non_frog_character.t) =
@@ -170,23 +170,6 @@ let finished (world : World.t) =
 let move_frog_with_log (frog : Frog.t) (log : Non_frog_character.t) =
   { frog with position = { frog.position with x = frog.position.x + log.horizontal_speed }}
 
-let tick_frog (world : World.t) =
-  let logs = logs_with_frog world in
-  match logs with
-  | log :: _ -> { world with frog = move_frog_with_log world.frog log }
-  | [] -> world
-
-let tick_nfcs (world : World.t) =
-  { world with nfcs = add_nfcs (remove_stale_nfcs (move_nfcs world.nfcs)) }
-
-let tick (world : World.t) =
-  let updated_world = tick_nfcs (tick_frog world) in
-  match world with
-  | { state = Dead; _ }
-  | { state = Won; _ } -> world
-  | _ -> { updated_world with state = if is_frog_dead updated_world then Dead else Playing }
-;;
-
 let calculate_position (frog : Frog.t) (key : Key.t) =
   match key with
   | Arrow_up -> { frog.position with y = min (frog.position.y + 1) ((List.length Board.rows) - 1) }
@@ -223,6 +206,23 @@ let get_nfc_image (nfc : Non_frog_character.t) =
   | { kind = Car1; _ } -> if nfc.horizontal_speed > 0 then Image.Car1_right else Image.Car1_left
   | { kind = Car2; _ } -> if nfc.horizontal_speed > 0 then Image.Car2_right else Image.Car2_left
   | { kind = Car3; _ } -> if nfc.horizontal_speed > 0 then Image.Car3_right else Image.Car3_left
+
+let tick_frog (world : World.t) =
+  let logs = logs_with_frog world in
+  match logs with
+  | log :: _ -> { world with frog = move_frog_with_log world.frog log }
+  | [] -> world
+
+let tick_nfcs (world : World.t) =
+  { world with nfcs = add_nfcs (remove_stale_nfcs (move_nfcs world.nfcs)) }
+
+let tick (world : World.t) =
+  let updated_world = tick_nfcs (tick_frog world) in
+  match world with
+  | { state = Dead; _ }
+  | { state = Won; _ } -> world
+  | _ -> { updated_world with state = if is_frog_dead updated_world then Dead else Playing }
+;;
 
 let handle_input (world : World.t) (key : Key.t) =
   let updated_world = move_frog world key in
