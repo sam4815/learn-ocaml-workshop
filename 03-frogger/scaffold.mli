@@ -71,6 +71,7 @@ module Key : sig
     | Arrow_down
     | Arrow_left
     | Arrow_right
+    | R
 end
 
 module Event : sig

@@ -46,6 +46,7 @@ module Key = struct
     | Arrow_down
     | Arrow_left
     | Arrow_right
+    | R
 end
 
 module Event = struct

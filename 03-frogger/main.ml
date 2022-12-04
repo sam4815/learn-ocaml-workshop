@@ -176,7 +176,7 @@ let init_event_handlers
           config.render_interval_ms /. config.logic_interval_ms
         in
         scaffold_state :=
-          if Float.(>=) new_interpolation_alpha 1.0
+          if Float.(>=) new_interpolation_alpha 0.5
           then Scaffold_state.apply_tick game_impl !scaffold_state
           else
             { !scaffold_state with interpolation_alpha = new_interpolation_alpha }
@@ -194,6 +194,7 @@ let init_event_handlers
         | "ArrowDown"  -> handle_keypress Arrow_down
         | "ArrowLeft"  -> handle_keypress Arrow_left
         | "ArrowRight" -> handle_keypress Arrow_right
+        | "r"          -> handle_keypress R
         | "i"          -> Scaffold_state.toggle_interpolation game_impl cur_scaffold_state
         | "u"          -> Scaffold_state.undo game_impl cur_scaffold_state
         | _            -> cur_scaffold_state
