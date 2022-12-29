@@ -113,11 +113,11 @@
   to do in a different order if you prefer) is:
 
 ** Phase 1: Initial Rendering
-   - [ ] [[file:lib/apple.ml][apple.ml]]: [create]
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [create]
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [locations]
-   - [ ] [[file:lib/game.ml][game.ml]]: [in_bounds]
-   - [ ] [[file:lib/game.ml][game.ml]]: [create]
+   - [x] [[file:lib/apple.ml][apple.ml]]: [create]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [create]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [locations]
+   - [x] [[file:lib/game.ml][game.ml]]: [in_bounds]
+   - [x] [[file:lib/game.ml][game.ml]]: [create]
 
    At the end of phase 1, you should be able to see the initial board
    get rendered with an apple and a snake. Additionally, all expect tests 

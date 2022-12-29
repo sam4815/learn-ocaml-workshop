@@ -11,7 +11,8 @@ type t =
 [@@deriving sexp_of]
 
 (* TODO: Implement [in_bounds]. *)
-let in_bounds t position = failwith "For you to implement"
+let in_bounds t { Position.row; col } =
+  col < t.width && row < t.height && col >= 0 && row >= 0
 
 (* TODO: Implement [create].
 
@@ -20,7 +21,14 @@ let in_bounds t position = failwith "For you to implement"
    unsuccessful, and "unable to create initial snake" if the initial snake is invalid
    (i.e. goes off the board). *)
 let create ~height ~width ~initial_snake_length ~amount_to_grow =
-  failwith "For you to implement"
+  let snake = Snake.create ~length:initial_snake_length in
+  let apple = Apple.create ~height:height ~width:width ~invalid_locations:(Snake.locations snake) in
+  match apple with
+  | None -> failwith "unable to create initial apple"
+  | Some apple ->
+    let game = { height; width; snake; apple; amount_to_grow; game_state = In_progress } in
+    if List.exists (Snake.locations snake) ~f:(fun position -> not (in_bounds game position)) then failwith "unable to create initial snake" else
+    game
 ;;
 
 let snake t = t.snake

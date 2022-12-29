@@ -17,7 +17,11 @@ type t =
 
    Note that at the beginning of the game, the snake will not need to grow at all, so
    [extensions_remaining] should be initialized to 0. *)
-let create ~length = failwith "For you to implement"
+let create ~length =
+   let locations =
+      List.init length ~f:(fun col -> { Position.row = 0; col = length - 1 - col })
+   in
+   { direction = Right; extensions_remaining = 0; locations = locations };;
 
 (* TODO: Implement [grow_over_next_steps].
 
@@ -28,7 +32,7 @@ let create ~length = failwith "For you to implement"
 let grow_over_next_steps t by_how_much = t
 
 (* TODO: Implement [locations]. *)
-let locations t = failwith "For you to implement"
+let locations t = t.locations
 
 (* TODO: Implement [head_location]. *)
 let head_location t = { Position.row = 0; col = 0 }
