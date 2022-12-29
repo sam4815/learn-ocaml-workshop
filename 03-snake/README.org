@@ -134,11 +134,11 @@
    #+END_SRC
 
 ** Phase 2: Utilities
-   - [ ] [[file:lib/direction.ml][direction.ml]]: [next_position]
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [grow_over_next_steps]
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [head_location]
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [set_direction] 
-   - [ ] [[file:lib/game.ml][game.ml]]: [set_direction]
+   - [x] [[file:lib/direction.ml][direction.ml]]: [next_position]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [grow_over_next_steps]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [head_location]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [set_direction] 
+   - [x] [[file:lib/game.ml][game.ml]]: [set_direction]
 
    At the end of phase 2, all expect tests for phase 2 should pass:
 

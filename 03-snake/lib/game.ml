@@ -36,7 +36,8 @@ let apple t = t.apple
 let game_state t = t.game_state
 
 (* TODO: Implement [set_direction]. *)
-let set_direction t direction = ()
+let set_direction t direction =
+  t.snake <- Snake.set_direction t.snake direction
 
 (* TODO: Implement [step].
 

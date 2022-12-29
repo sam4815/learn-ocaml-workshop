@@ -29,16 +29,19 @@ let create ~length =
 
    Notice that this function should not actually grow the snake, but only record that we
    should grow the snake one block for the next [by_how_much] squares. *)
-let grow_over_next_steps t by_how_much = t
+let grow_over_next_steps t by_how_much = { t with extensions_remaining = by_how_much }
 
 (* TODO: Implement [locations]. *)
 let locations t = t.locations
 
 (* TODO: Implement [head_location]. *)
-let head_location t = { Position.row = 0; col = 0 }
+let head_location t =
+   match t.locations with
+   | hd :: tl -> hd
+   | [] -> { Position.row = 0; col = 0 }
 
 (* TODO: Implement [set_direction]. *)
-let set_direction t direction = t
+let set_direction t direction = { t with direction = direction }
 
 (* TODO: Implement [step].
 
