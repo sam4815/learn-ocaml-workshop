@@ -22,13 +22,13 @@ let in_bounds t { Position.row; col } =
    (i.e. goes off the board). *)
 let create ~height ~width ~initial_snake_length ~amount_to_grow =
   let snake = Snake.create ~length:initial_snake_length in
-  let apple = Apple.create ~height:height ~width:width ~invalid_locations:(Snake.locations snake) in
-  match apple with
+  let apple = match Apple.create ~height:height ~width:width ~invalid_locations:(Snake.locations snake) with
   | None -> failwith "unable to create initial apple"
-  | Some apple ->
-    let game = { height; width; snake; apple; amount_to_grow; game_state = In_progress } in
-    if List.exists (Snake.locations snake) ~f:(fun position -> not (in_bounds game position)) then failwith "unable to create initial snake" else
-    game
+  | Some apple -> apple in
+  let game = { height; width; snake; apple; amount_to_grow; game_state = In_progress } in
+  match List.exists (Snake.locations snake) ~f:(fun position -> not (in_bounds game position)) with
+  | true -> failwith "unable to create initial snake"
+  | false -> game
 ;;
 
 let snake t = t.snake
@@ -47,7 +47,17 @@ let set_direction t direction =
    - if necessary:
      -- consume apple
      -- if apple cannot be regenerated, win game; otherwise, grow the snake *)
-let step t = ()
+let step t =
+  let snake = Snake.step t.snake in
+  match snake with
+  | None -> t.game_state <- Game_over "Self collision"
+  | Some snake -> t.snake <- snake;
+  if List.exists (Snake.locations snake) ~f:(fun position -> not (in_bounds t position))
+  then t.game_state <- Game_over "Wall collision";
+  if [%compare.equal: Position.t] (Apple.location t.apple) (Snake.head_location t.snake)
+  then match Apple.create ~height:t.height ~width:t.width ~invalid_locations:(Snake.locations snake) with
+    | None -> t.game_state <- Win
+    | Some apple -> t.apple <- apple; t.snake <- (Snake.grow_over_next_steps snake t.amount_to_grow)
 
 module For_testing = struct
   let create_apple_force_location_exn ~height ~width ~location =

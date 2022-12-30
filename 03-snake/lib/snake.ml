@@ -29,7 +29,7 @@ let create ~length =
 
    Notice that this function should not actually grow the snake, but only record that we
    should grow the snake one block for the next [by_how_much] squares. *)
-let grow_over_next_steps t by_how_much = { t with extensions_remaining = by_how_much }
+let grow_over_next_steps t by_how_much = { t with extensions_remaining = t.extensions_remaining + by_how_much }
 
 (* TODO: Implement [locations]. *)
 let locations t = t.locations
@@ -43,6 +43,11 @@ let head_location t =
 (* TODO: Implement [set_direction]. *)
 let set_direction t direction = { t with direction = direction }
 
+let rec has_duplicate_position lst =
+   match lst with
+   | [] -> false
+   | hd :: tl -> List.exists tl ~f:(fun location -> ([%compare.equal: Position.t] location hd)) || has_duplicate_position tl
+
 (* TODO: Implement [step].
 
    Read over the documentation of this function in the mli.
@@ -50,4 +55,12 @@ let set_direction t direction = { t with direction = direction }
    [step] should:
    - move the snake forward one block, growing it and updating [t.locations] if necessary
    - check for self collisions *)
-let step t = Some t
+let step t =
+   let locations =
+      match t.extensions_remaining with
+      | 0 -> (Direction.next_position t.direction (head_location t)) :: List.filteri t.locations ~f:(fun i pos -> i <> (List.length t.locations - 1))
+      | _ -> (Direction.next_position t.direction (head_location t)) :: t.locations in
+   match (has_duplicate_position locations), t.extensions_remaining with
+   | true, _ -> None
+   | false, 0 -> Some { t with locations = locations }
+   | false, _ -> Some { t with locations = locations; extensions_remaining = t.extensions_remaining - 1 }

@@ -147,8 +147,8 @@
    #+END_SRC
 
 ** Phase 3: Game Progression
-   - [ ] [[file:lib/snake.ml][snake.ml]]: [step]
-   - [ ] [[file:lib/game.ml][game.ml]]: [step]
+   - [x] [[file:lib/snake.ml][snake.ml]]: [step]
+   - [x] [[file:lib/game.ml][game.ml]]: [step]
 
    At the end of phase 3, you should be able to play snake in its
    entirety and also pass all expect tests:
