@@ -71,5 +71,5 @@ let run () =
 
 let () =
   run ();
-  Core_kernel.never_returns (Async.Scheduler.go ())
+  Core.never_returns (Async.Scheduler.go ())
 ;;

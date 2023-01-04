@@ -17,14 +17,12 @@ let create () =
 
 let rotate_left t =
   (* TODO : rotate the piece to the left (counterclockwise). *)
-  ignore t;
-  t
+  { top_left = t.top_right; top_right = t.bottom_right; bottom_left = t.top_left; bottom_right = t.bottom_left }
 ;;
 
 let rotate_right t =
   (* TODO : rotate the piece to the right (clockwise). *)
-  ignore t;
-  t
+  { top_left = t.bottom_left; top_right = t.top_left; bottom_left = t.bottom_right; bottom_right = t.top_right }
 ;;
 
 let coords ~bottom_left:{ Point.col; row } : Point.t list =
