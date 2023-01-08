@@ -35,19 +35,27 @@ let remove_squares t =
   ignore (mark_squares_that_are_sweepable t)
 ;;
 
-let add_piece_and_apply_gravity t ~moving_piece ~col =
-  (* TODO: insert (affix) the moving piece into the board, applying gravity
-     appropriately. Make sure to leave the board in a valid state. *)
-  ignore t;
-  ignore moving_piece;
-  ignore col;
-  true
-;;
-
 let is_empty t point =
   match get t point with
   | None -> true
   | Some _ -> false
+;;
+
+let add_piece_and_apply_gravity t ~moving_piece:{ Moving_piece.top_left; top_right; bottom_left; bottom_right } ~col =
+  (* TODO: insert (affix) the moving piece into the board, applying gravity
+     appropriately. Make sure to leave the board in a valid state. *)
+  let can_be_added =
+    List.fold_left
+      (Moving_piece.coords ~bottom_left:{ col = col; row = 1 })
+      ~f:(fun valid point -> valid && (is_empty t point))
+      ~init:true in
+  if can_be_added then (
+    set t { col = col; row = 0 } (Some top_left);
+    set t { col = col + 1; row = 0 } (Some top_right);
+    set t { col = col; row = 1 } (Some bottom_left);
+    set t { col = col + 1; row = 1 } (Some bottom_right);
+    true
+  ) else false;
 ;;
 
 (* Tests *)

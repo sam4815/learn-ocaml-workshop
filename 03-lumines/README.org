@@ -109,8 +109,8 @@
     even if you don't yet have a way to move the piece on the board.
     
 ** Phase 2: Game progression
-    - [ ]  [[file:lib/board.ml][board.ml]]: [add_piece_and_apply_gravity]
-    - [ ]  [[file:lib/game.ml][game.ml]]: [tick]
+    - [x]  [[file:lib/board.ml][board.ml]]: [add_piece_and_apply_gravity]
+    - [x]  [[file:lib/game.ml][game.ml]]: [tick]
    
     Once you have these two functions, you'll be able run the game and see pieces fall 
     down on the board.

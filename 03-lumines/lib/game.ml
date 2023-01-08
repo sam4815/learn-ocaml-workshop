@@ -71,7 +71,14 @@ let tick t =
      Note: We want to guarantee that the board is in a valid state at the end of
      [tick]. Depending on your implementation, you might need to check if the
      game is over here. *)
-  ignore t
+  if Board.is_empty t.board { Point.col = t.moving_piece_col; row = t.moving_piece_row - 1 } then
+    t.moving_piece_row <- t.moving_piece_row - 1
+  else if Board.add_piece_and_apply_gravity t.board ~moving_piece:t.moving_piece ~col:t.moving_piece_col then
+      let _ = t.moving_piece <- Moving_piece.create () in
+      let _ = t.moving_piece_col <- (t.width - 1) / 2 in
+      t.moving_piece_row <- t.height
+  else
+    t.game_over := true
 ;;
 
 (* Tests *)
