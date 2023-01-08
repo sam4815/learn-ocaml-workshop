@@ -41,21 +41,30 @@ let is_empty t point =
   | Some _ -> false
 ;;
 
+let is_square_empty t ~bottom_left =
+  List.fold_left
+    (Moving_piece.coords ~bottom_left)
+    ~f:(fun valid point -> valid && (is_empty t point))
+    ~init:true
+;;
+
 let add_piece_and_apply_gravity t ~moving_piece:{ Moving_piece.top_left; top_right; bottom_left; bottom_right } ~col =
   (* TODO: insert (affix) the moving piece into the board, applying gravity
      appropriately. Make sure to leave the board in a valid state. *)
-  let can_be_added =
-    List.fold_left
-      (Moving_piece.coords ~bottom_left:{ col = col; row = 1 })
-      ~f:(fun valid point -> valid && (is_empty t point))
-      ~init:true in
-  if can_be_added then (
-    set t { col = col; row = 0 } (Some top_left);
-    set t { col = col + 1; row = 0 } (Some top_right);
-    set t { col = col; row = 1 } (Some bottom_left);
-    set t { col = col + 1; row = 1 } (Some bottom_right);
-    true
-  ) else false;
+  let lowest_index =
+    List.find
+      (List.range 0 (t.height - 1))
+      ~f:(fun i -> is_square_empty t ~bottom_left:{ Point.col = col; row = i}) in
+  match lowest_index with
+    | None -> false
+    | Some i when i = t.height -> false
+    | Some i -> (
+      set t { col = col; row = i + 1 } (Some top_left);
+      set t { col = col + 1; row = i + 1 } (Some top_right);
+      set t { col = col; row = i } (Some bottom_left);
+      set t { col = col + 1; row = i } (Some bottom_right);
+      true
+    )
 ;;
 
 (* Tests *)
