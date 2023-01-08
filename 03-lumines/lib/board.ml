@@ -13,6 +13,29 @@ let create ~height ~width =
 let get t { Point.col; row } = t.board.(col).(row)
 let set t { Point.col; row } value = t.board.(col).(row) <- value
 
+let is_color t point color =
+  match get t point with
+  | None -> false
+  | Some square -> Color.equal square.color color
+;;
+
+let is_square_color t ~bottom_left ~color =
+  List.fold_left
+    (Moving_piece.coords ~bottom_left)
+    ~f:(fun valid point -> valid && (is_color t point color))
+    ~init:true
+;;
+
+let to_sweep_square t ~bottom_left =
+  List.iter
+    (Moving_piece.coords ~bottom_left)
+    ~f:(fun point ->
+      match get t point with
+      | None -> ()
+      | Some square -> square.sweeper_state <- To_sweep
+    )
+;;
+
 let mark_squares_that_are_sweepable t =
   (* TODO: at the end of this function, all filled_squares that are part of
      completed squares (i.e. four tiles in a square arrangement that are all of
@@ -21,7 +44,21 @@ let mark_squares_that_are_sweepable t =
 
      Note that, for example, a 2x3 rectangle of all the same color should also
      be marked by these criteria. *)
-  ignore t
+  List.iter (List.range 0 (((t.height-1) * t.width-1))) ~f:(fun i ->
+    let point = { Point.row = (i/t.width); col = (i%(t.width-1)) } in
+    match get t point with
+    | None -> ()
+    | Some square -> if is_square_color t ~bottom_left:point ~color:square.color then
+        to_sweep_square t ~bottom_left:point
+      else ()
+  )
+;;
+
+let shift_col_down t { Point.row; col } =
+  List.iter (List.range row (t.height - 1)) ~f:(fun i ->
+    set t { Point.row = i; col = col } (get t { Point.row = i + 1; col = col})
+  );
+  set t { Point.row = t.height-1; col = col } None
 ;;
 
 let remove_squares t =
@@ -32,7 +69,13 @@ let remove_squares t =
      At the end of this function, we should call
      [mark_squares_that_are_sweepable] so that we ensure that we leave the board
      in a valid state.  *)
-  ignore (mark_squares_that_are_sweepable t)
+  List.iter (List.rev (List.range 0 (t.height * t.width))) ~f:(fun i ->
+    let point = { Point.row = (i/t.width); col = (i % t.width) } in
+    match get t point with
+    | Some { sweeper_state = Swept; _ } -> shift_col_down t point
+    | _ -> ()
+  );
+  mark_squares_that_are_sweepable t
 ;;
 
 let is_empty t point =
@@ -55,20 +98,20 @@ let is_square_bottom_empty t ~bottom_left =
 let add_piece_and_apply_gravity t ~moving_piece:{ Moving_piece.top_left; top_right; bottom_left; bottom_right } ~col =
   (* TODO: insert (affix) the moving piece into the board, applying gravity
      appropriately. Make sure to leave the board in a valid state. *)
-  let lowest_index =
+  let first_blocked_index =
     List.find
-      (List.range 0 (t.height - 1))
-      ~f:(fun i -> is_square_empty t ~bottom_left:{ Point.col = col; row = i}) in
-  match lowest_index with
-    | None -> false
-    | Some i when i = t.height -> false
-    | Some i -> (
-      set t { col = col; row = i + 1 } (Some top_left);
-      set t { col = col + 1; row = i + 1 } (Some top_right);
-      set t { col = col; row = i } (Some bottom_left);
-      set t { col = col + 1; row = i } (Some bottom_right);
-      true
-    )
+      (List.rev (List.range 0 (t.height - 1)))
+      ~f:(fun i -> not (is_square_empty t ~bottom_left:{ Point.col = col; row = i})) in
+  let moving_piece_index = match first_blocked_index with
+  | None -> 0
+  | Some i -> i + 1 in
+  if moving_piece_index < t.height - 1 then (
+    set t { col = col; row = moving_piece_index + 1 } (Some top_left);
+    set t { col = col + 1; row = moving_piece_index + 1 } (Some top_right);
+    set t { col = col; row = moving_piece_index } (Some bottom_left);
+    set t { col = col + 1; row = moving_piece_index } (Some bottom_right);
+    true
+  ) else false
 ;;
 
 (* Tests *)

@@ -34,4 +34,8 @@ val is_empty : t -> Point.t -> bool
 
 val is_square_empty : t -> bottom_left:Point.t -> bool
 
+val is_color : t -> Point.t -> Color.t -> bool
+
+val is_square_color : t -> bottom_left:Point.t -> color:Color.t -> bool
+
 val is_square_bottom_empty : t -> bottom_left:Point.t -> bool
