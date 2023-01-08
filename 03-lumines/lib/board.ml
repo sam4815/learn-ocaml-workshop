@@ -48,6 +48,10 @@ let is_square_empty t ~bottom_left =
     ~init:true
 ;;
 
+let is_square_bottom_empty t ~bottom_left =
+  is_empty t bottom_left && is_empty t { Point.col = bottom_left.col + 1; row = bottom_left.row }
+;;
+
 let add_piece_and_apply_gravity t ~moving_piece:{ Moving_piece.top_left; top_right; bottom_left; bottom_right } ~col =
   (* TODO: insert (affix) the moving piece into the board, applying gravity
      appropriately. Make sure to leave the board in a valid state. *)

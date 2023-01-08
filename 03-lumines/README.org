@@ -116,10 +116,10 @@
     down on the board.
    
 ** Phase 3: Piece movement
-    - [ ]  [[file:lib/game.ml][game.ml]]: [can_move]
-    - [ ]  [[file:lib/game.ml][game.ml]]: [move_left]
-    - [ ]  [[file:lib/game.ml][game.ml]]: [move_right]
-    - [ ]  [[file:lib/game.ml][game.ml]]: [drop]
+    - [x]  [[file:lib/game.ml][game.ml]]: [can_move]
+    - [x]  [[file:lib/game.ml][game.ml]]: [move_left]
+    - [x]  [[file:lib/game.ml][game.ml]]: [move_right]
+    - [x]  [[file:lib/game.ml][game.ml]]: [drop]
     
     After completing phase 3, you can run the game and move pieces around.
     

@@ -31,3 +31,7 @@ val add_piece_and_apply_gravity : t -> moving_piece:Moving_piece.t -> col:int ->
 (* [is_empty] takes a row and a col and returns: true if that square is empty
    false if that square is filled *)
 val is_empty : t -> Point.t -> bool
+
+val is_square_empty : t -> bottom_left:Point.t -> bool
+
+val is_square_bottom_empty : t -> bottom_left:Point.t -> bool

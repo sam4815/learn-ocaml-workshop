@@ -36,20 +36,28 @@ let can_move t ~row ~col =
      corner is at [row] [col] will cause the board to be invalid
      either because the piece will collide with a filled-in square on
      the board or because it runs off the board *)
-  ignore row;
-  ignore col;
-  ignore t;
-  false
+  let point = { Point.row = row; col = col } in
+  match row, col with
+  | row, col when col < 0 || row < 0 -> false
+  | _, col when col >= t.width - 1 -> false
+  | row, _ when row >= t.height -> true
+  | row, _ when row = t.height - 1 && Board.is_square_bottom_empty t.board ~bottom_left:point -> true
+  | row, col when Board.is_square_empty t.board ~bottom_left:point -> true
+  | _ -> false
 ;;
 
 let move_left t =
   (* TODO: Move the active piece left one square *)
-  ignore t
+  if can_move t ~row:t.moving_piece_row ~col:(t.moving_piece_col-1) then
+    t.moving_piece_col <- t.moving_piece_col-1
+  else ()
 ;;
 
 let move_right t =
   (* TODO: Move the active piece right one square *)
-  ignore t
+  if can_move t ~row:t.moving_piece_row ~col:(t.moving_piece_col+1) then
+    t.moving_piece_col <- t.moving_piece_col+1
+  else ()
 ;;
 
 let rotate_right t = t.moving_piece <- Moving_piece.rotate_right t.moving_piece
@@ -61,7 +69,12 @@ let drop t =
 
      Note: Depending on your implementation, you might need to check if the game
      is over here.  *)
-  ignore t
+  if Board.add_piece_and_apply_gravity t.board ~moving_piece:t.moving_piece ~col:t.moving_piece_col then
+    let _ = t.moving_piece <- Moving_piece.create () in
+    let _ = t.moving_piece_col <- (t.width - 1) / 2 in
+    t.moving_piece_row <- t.height
+  else
+    t.game_over := true
 ;;
 
 let tick t =
